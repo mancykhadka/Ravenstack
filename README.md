@@ -1,9 +1,6 @@
-# Ravenstack
-Customer Churn Prediction &amp; Retention Optimization (SaaS)
+# RavenStack - Customer Churn Prediction & Retention Optimization (SaaS)
 
-# Customer Churn Prediction & Retention Optimization (SaaS)
-
-An end-to-end churn prediction pipeline for a B2B SaaS company, from five raw relational tables to a deployed risk segmentation framework with prescribed retention actions, built for a graduate Business Analytics capstone.
+An end-to-end churn analysis for a B2B SaaS company, from five raw relational tables to a predictive model and a prescriptive risk segmentation framework, built for a graduate Business Analytics capstone. Includes both a **Python** implementation (full predictive pipeline) and a **SQL** implementation (data integration and descriptive analytics).
 
 ## Overview
 
@@ -13,9 +10,16 @@ RavenStack, a B2B SaaS collaboration platform with 500 accounts across five indu
 
 ## Tech Stack
 
-- **Python** — pandas, scikit-learn (Pipeline, ColumnTransformer, LogisticRegression)
-- **Google Colab** — reproducible notebook environment
-- **Matplotlib / Seaborn** — visualization
+- **Python** — pandas, scikit-learn (Pipeline, ColumnTransformer, LogisticRegression), Matplotlib / Seaborn, Google Colab
+- **SQL (MySQL 8.0)** — database design, data cleaning, CTEs, multi-table joins, aggregation
+
+## Repository Structure
+
+| File | Purpose |
+|------|---------|
+| `RavenStack_Final_Report.pdf` | Full academic report with methodology, all figures, and references |
+| `churn_analysis.ipynb` | Annotated Python notebook: data prep, modeling, evaluation, segmentation |
+| `ravenstack_churn.sql` | SQL implementation: database setup, data cleaning, descriptive analytics (Phase A), and master table build (Phase B) |
 
 ## The Process
 
@@ -28,6 +32,17 @@ RavenStack, a B2B SaaS collaboration platform with 500 accounts across five indu
 **4. Coefficient analysis** — Identified the strongest churn risk and protective factors. The most analytically interesting finding: `avg_usage_count` (+0.43, risk) and `avg_session_secs` (-0.55, protective) point in opposite directions, high action counts with short sessions likely signal navigational frustration, while long session duration signals productive use.
 
 **5. Prescriptive segmentation (Phase C)** — Scored all 500 accounts and classified them into Low/Medium/High risk tiers with specific prescribed actions per tier. Observed churn rates rose monotonically from 10.7% (Low) to 39.6% (High), confirming the model's scores reflect genuine differential risk. The Medium Risk tier, 381 accounts holding $864K MRR (77% of the portfolio), emerged as the highest-priority target since it combines meaningful risk with the largest revenue concentration.
+
+## SQL Implementation
+
+The SQL version (`ravenstack_churn.sql`) rebuilds the data pipeline and descriptive analysis in MySQL, demonstrating the same analytical thinking in a second language. It covers:
+
+- **Database and table design** across all 5 related tables
+- **Data cleaning** — source CSVs store booleans as text ("True"/"False"), which MySQL rejects on import. Loaded columns as text first, then converted "True"/"False" to 1/0 and blanks to NULL, and altered columns to proper types. This "load raw, clean in SQL" approach keeps raw data intact and every transformation auditable.
+- **Phase A descriptive analytics** — churn rate by industry, referral source, plan tier, tenure (bucketed with `CASE WHEN`), exit reason, and country
+- **Phase B master table build** — four CTEs aggregate each child table to account level, then LEFT JOINs preserve all 500 accounts in a single analysis-ready table
+
+**SQL techniques:** schema design, `CASE WHEN` conditional logic, type conversion (`ALTER TABLE ... MODIFY`), aggregation (`GROUP BY`, `SUM`, `AVG`, `COUNT`), CTEs, multi-table `LEFT JOIN`s, `DATEDIFF` feature engineering, and `COALESCE`.
 
 ## Key Findings
 
@@ -45,4 +60,5 @@ RavenStack, a B2B SaaS collaboration platform with 500 accounts across five indu
 4. Shift engagement measurement from session frequency to session depth
 
 ## Author
+
 Mancy Khadka
